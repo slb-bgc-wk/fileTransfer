@@ -1,6 +1,6 @@
 <!-- login.component.html -->
-<div class="login-container">
-  <mat-card>
+<div fxLayout="column" fxLayoutAlign="center center" class="login-container">
+  <mat-card fxFlex="30%">
     <mat-card-header>
       <mat-card-title>Login</mat-card-title>
     </mat-card-header>
@@ -19,11 +19,10 @@
 </div>
 
 
+
+/* login.component.css */
 /* login.component.css */
 .login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
 }
 
@@ -31,3 +30,14 @@
   width: 100%;
   margin-bottom: 15px;
 }
+
+@media screen and (max-width: 600px) {
+  .login-container {
+    padding: 10px;
+  }
+  
+  mat-card {
+    width: 100%;
+  }
+}
+
