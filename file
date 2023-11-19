@@ -1,43 +1,68 @@
-<!-- login.component.html -->
-<div fxLayout="column" fxLayoutAlign="center center" class="login-container">
-  <mat-card fxFlex="30%">
-    <mat-card-header>
-      <mat-card-title>Login</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <form (ngSubmit)="login()" #loginForm="ngForm">
-        <mat-form-field class="full-width">
-          <input matInput placeholder="Username" name="username" ngModel required>
-        </mat-form-field>
-        <mat-form-field class="full-width">
-          <input matInput type="password" placeholder="Password" name="password" ngModel required>
-        </mat-form-field>
-        <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">Login</button>
-      </form>
-    </mat-card-content>
-  </mat-card>
-</div>
 
 
+// shared-data.service.ts
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
+import { share } from 'rxjs/operators';
 
-/* login.component.css */
-/* login.component.css */
-.login-container {
-  height: 100vh;
-}
+@Injectable({
+  providedIn: 'root',
+})
+export class SharedDataService {
+  private dataSubject = new Subject<any>();
+  sharedData$ = this.dataSubject.asObservable().pipe(share());
 
-.full-width {
-  width: 100%;
-  margin-bottom: 15px;
-}
-
-@media screen and (max-width: 600px) {
-  .login-container {
-    padding: 10px;
-  }
-  
-  mat-card {
-    width: 100%;
+  sendData(data: any) {
+    this.dataSubject.next(data);
   }
 }
 
+
+// component-a.component.ts
+import { Component, OnInit } from '@angular/core';
+import { SharedDataService } from 'path-to-shared-data.service';
+
+@Component({
+  selector: 'app-component-a',
+  template: `
+    <div>
+      <h2>Component A</h2>
+      <button (click)="sendData()">Send Data from A</button>
+    </div>
+  `,
+})
+export class ComponentAComponent implements OnInit {
+  constructor(private sharedDataService: SharedDataService) {}
+
+  ngOnInit() {}
+
+  sendData() {
+    this.sharedDataService.sendData('Data from Component A');
+  }
+}
+
+
+// component-b.component.ts
+import { Component, OnInit } from '@angular/core';
+import { SharedDataService } from 'path-to-shared-data.service';
+
+@Component({
+  selector: 'app-component-b',
+  template: `
+    <div>
+      <h2>Component B</h2>
+      <p>{{ receivedData }}</p>
+    </div>
+  `,
+})
+export class ComponentBComponent implements OnInit {
+  receivedData: any;
+
+  constructor(private sharedDataService: SharedDataService) {}
+
+  ngOnInit() {
+    this.sharedDataService.sharedData$.subscribe((data) => {
+      this.receivedData = data;
+    });
+  }
+}
