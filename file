@@ -1,68 +1,43 @@
+<!-- signup.component.html -->
+<div fxLayout="column" fxLayoutAlign="center center" class="signup-container">
+  <mat-card fxFlex="30%">
+    <mat-card-header>
+      <mat-card-title>Sign Up</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form (ngSubmit)="signup()" #signupForm="ngForm">
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Name" name="name" ngModel required>
+        </mat-form-field>
+        <mat-form-field class="full-width">
+          <input matInput type="email" placeholder="Email" name="email" ngModel required>
+        </mat-form-field>
+        <mat-form-field class="full-width">
+          <input matInput type="password" placeholder="Password" name="password" ngModel required>
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!signupForm.valid">Sign Up</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
 
 
-// shared-data.service.ts
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-import { share } from 'rxjs/operators';
-
-@Injectable({
-  providedIn: 'root',
-})
-export class SharedDataService {
-  private dataSubject = new Subject<any>();
-  sharedData$ = this.dataSubject.asObservable().pipe(share());
-
-  sendData(data: any) {
-    this.dataSubject.next(data);
-  }
+/* signup.component.css */
+.signup-container {
+  height: 100vh;
 }
 
-
-// component-a.component.ts
-import { Component, OnInit } from '@angular/core';
-import { SharedDataService } from 'path-to-shared-data.service';
-
-@Component({
-  selector: 'app-component-a',
-  template: `
-    <div>
-      <h2>Component A</h2>
-      <button (click)="sendData()">Send Data from A</button>
-    </div>
-  `,
-})
-export class ComponentAComponent implements OnInit {
-  constructor(private sharedDataService: SharedDataService) {}
-
-  ngOnInit() {}
-
-  sendData() {
-    this.sharedDataService.sendData('Data from Component A');
-  }
+.full-width {
+  width: 100%;
+  margin-bottom: 15px;
 }
 
+@media screen and (max-width: 600px) {
+  .signup-container {
+    padding: 10px;
+  }
 
-// component-b.component.ts
-import { Component, OnInit } from '@angular/core';
-import { SharedDataService } from 'path-to-shared-data.service';
-
-@Component({
-  selector: 'app-component-b',
-  template: `
-    <div>
-      <h2>Component B</h2>
-      <p>{{ receivedData }}</p>
-    </div>
-  `,
-})
-export class ComponentBComponent implements OnInit {
-  receivedData: any;
-
-  constructor(private sharedDataService: SharedDataService) {}
-
-  ngOnInit() {
-    this.sharedDataService.sharedData$.subscribe((data) => {
-      this.receivedData = data;
-    });
+  mat-card {
+    width: 100%;
   }
 }
