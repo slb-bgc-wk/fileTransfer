@@ -1,43 +1,20 @@
-<!-- signup.component.html -->
-<div fxLayout="column" fxLayoutAlign="center center" class="signup-container">
-  <mat-card fxFlex="30%">
-    <mat-card-header>
-      <mat-card-title>Sign Up</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <form (ngSubmit)="signup()" #signupForm="ngForm">
-        <mat-form-field class="full-width">
-          <input matInput placeholder="Name" name="name" ngModel required>
-        </mat-form-field>
-        <mat-form-field class="full-width">
-          <input matInput type="email" placeholder="Email" name="email" ngModel required>
-        </mat-form-field>
-        <mat-form-field class="full-width">
-          <input matInput type="password" placeholder="Password" name="password" ngModel required>
-        </mat-form-field>
-        <button mat-raised-button color="primary" type="submit" [disabled]="!signupForm.valid">Sign Up</button>
-      </form>
-    </mat-card-content>
-  </mat-card>
-</div>
+@Injectable({
+  providedIn: 'root'
+})
+export class  AuthGuardService implements CanActivate{
 
+  constructor(private auth : AuthService, private router: Router) { }
 
-/* signup.component.css */
-.signup-container {
-  height: 100vh;
-}
+  canActivate(route : ActivatedRouteSnapshot, state : RouterStateSnapshot) {
+      return this.auth.user$.pipe(map( user => {
+        if (user) return true;
+        this.router.navigate(['/login'], {queryParams: {returnUrl: state.url}});
+        return false;
+      }
 
-.full-width {
-  width: 100%;
-  margin-bottom: 15px;
-}
-
-@media screen and (max-width: 600px) {
-  .signup-container {
-    padding: 10px;
-  }
-
-  mat-card {
-    width: 100%;
+      ));
   }
 }
+
+
+    {path:'products', component: ProductsComponent, canActivate: [AuthGuardService]},
