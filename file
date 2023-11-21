@@ -1,20 +1,61 @@
-@Injectable({
-  providedIn: 'root'
-})
-export class  AuthGuardService implements CanActivate{
+<div fxLayout="row" fxLayoutAlign="center center" class="course-detail-container">
+  <mat-card class="course-detail-card">
+    <mat-card-title>{{ course.name }}</mat-card-title>
+    <mat-card-subtitle>{{ course.instructor }}</mat-card-subtitle>
 
-  constructor(private auth : AuthService, private router: Router) { }
+    <mat-card-content>
+      <p>{{ course.description }}</p>
+      <div class="detail-row">
+        <div class="detail-label">Start Time:</div>
+        <div class="detail-value">{{ course.startTime | date:'medium' }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">End Time:</div>
+        <div class="detail-value">{{ course.endTime | date:'medium' }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Max Capacity:</div>
+        <div class="detail-value">{{ course.maxCapacity }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Available Seats:</div>
+        <div class="detail-value">{{ course.maxCapacity - course.registeredStudents.length }}</div>
+      </div>
+    </mat-card-content>
 
-  canActivate(route : ActivatedRouteSnapshot, state : RouterStateSnapshot) {
-      return this.auth.user$.pipe(map( user => {
-        if (user) return true;
-        this.router.navigate(['/login'], {queryParams: {returnUrl: state.url}});
-        return false;
-      }
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="registerForCourse()" [disabled]="isCourseFull()">
+        Register
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
 
-      ));
-  }
+
+
+/* course-detail.component.css */
+.course-detail-container {
+  height: 100vh;
 }
 
+.course-detail-card {
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-    {path:'products', component: ProductsComponent, canActivate: [AuthGuardService]},
+.detail-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.detail-label {
+  flex: 1;
+  font-weight: bold;
+}
+
+.detail-value {
+  flex: 2;
+  margin-left: 10px;
+}
